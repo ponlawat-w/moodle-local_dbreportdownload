@@ -2,6 +2,7 @@
 
 require_once(__DIR__ . '/../../config.php');
 require_once(__DIR__ . '/../../mod/data/classes/manager.php');
+require_once(__DIR__ . '/classes/downloadoptions_form.php');
 
 require_login();
 $dataid = required_param('d', PARAM_INT);
