@@ -1,23 +1,47 @@
 <?php
 
 require_once(__DIR__ . '/../../config.php');
-require_once(__DIR__ . '/../../mod/data/classes/manager.php');
+require_once(__DIR__ . '/lib.php');
+require_once(__DIR__ . '/classes/downloadoptions_form.php');
 
 require_login();
+
 $dataid = required_param('d', PARAM_INT);
-$format = strtolower(optional_param('f', 'doc', PARAM_TEXT));
-if ($format != 'doc') {
-    throw new moodle_exception('Unsupported format');
-}
+$fallbackurl = new moodle_url('/local/dbreportdownload/options.php', ['d' => $dataid]);
 
 /**
  * @var \moodle_database $DB
+ * @var \moodle_page $PAGE
  */
 $data = $DB->get_record('data', ['id' => $dataid], '*', MUST_EXIST);
 require_login($data->course);
 
 $cm = get_coursemodule_from_instance('data', $data->id);
 $context = context_module::instance($cm->id, MUST_EXIST);
+
+$PAGE->set_context($context);
+
+$form = new downloadoptions_form($dataid);
+if (!$form->is_submitted()) {
+    redirect($fallbackurl);
+    exit;
+}
+
+$fromform = $form->get_data();
+
+$format = $fromform->format;
+if ($format != 'doc') {
+    throw new moodle_exception('Unsupported format', 'local_dbreportdownload', $fallbackurl);
+}
+
+$fieldids = [];
+foreach ($fromform->fields as $fieldid => $isenbaled) if ($isenbaled) {
+    $fieldids[] = $fieldid;
+}
+
+if (!count($fieldids)) {
+    throw new moodle_exception('No fields selected', 'local_dbreportdownload', $fallbackurl);
+}
 
 define('MOODLE_LOCAL_DBREPORTDOWNLOAD_DOC', 1);
 
@@ -34,8 +58,7 @@ echo html_writer::tag('style', '* { font-family: sans-serif; } table { border-co
 echo html_writer::end_tag('head');
 echo html_writer::start_tag('body');
 $records = $DB->get_records('data_records', ['dataid' => $data->id, 'userid' => $USER->id], 'timecreated ASC');
-$manager = \mod_data\manager::create_from_instance($data);
-$parser = $manager->get_template('singletemplate', ['search' => '', 'page' => 0]);
+$parser = local_dbreportdownload_gettemplate($data, $fieldids);
 foreach ($records as $record) {
     echo $parser->parse_entries([$record]);
     echo html_writer::start_tag('hr');

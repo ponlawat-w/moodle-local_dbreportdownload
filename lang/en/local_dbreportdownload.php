@@ -25,8 +25,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['pluginname'] = 'Database Report Download';
 $string['dbreportdownload:downloadmyreport'] = 'Download Own\'s Report';
-$string['dbreportdownload:downloadmyreport'] = 'Download My Report';
+
 $string['downloadmyreport'] = 'Download My Report';
-$string['pluginname'] = 'Database Report Download';
-$string['pluginname'] = 'Database Report Download';
+$string['downloadmyreportfrom'] = 'Download My Report from {$a}';
+$string['exportedfields'] = 'Exported Fields';
