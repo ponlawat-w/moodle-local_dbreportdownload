@@ -23,6 +23,32 @@ function local_dbreportdownload_extend_settings_navigation(settings_navigation $
 }
 
 /**
+ * @param stdClass $data
+ * @return array
+ */
+function local_dbreportdownload_getorderedfieldids($data) {
+    /**
+     * @var \moodle_database $DB
+     */
+    global $DB;
+    $fields = $DB->get_records('data_fields', ['dataid' => $data->id], '', 'id,name');
+    $manager = \mod_data\manager::create_from_instance($data);
+    $template = $manager->get_template('singletemplate', ['search' => '', 'page' => 0]);
+    $content = $template->get_template_content();
+    $strposes = [];
+    foreach ($fields as $field) {
+        $pos = strpos($content, "[[{$field->name}]]");
+        $strposes[] = $pos === false ? strlen($content) : $pos;
+    }
+    array_multisort($strposes, $fields);
+    $results = [];
+    foreach ($fields as $field) {
+        $results[$field->id] = $field->name;
+    }
+    return $results;
+}
+
+/**
  * @param stdClass $dataid
  * @param string[] $fieldids
  * @return \mod_data\template

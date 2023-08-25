@@ -2,6 +2,7 @@
 
 defined('MOODLE_INTERNAL') or die();
 
+require_once(__DIR__ . '/../lib.php');
 require_once(__DIR__ . '/../../../lib/formslib.php');
 
 class downloadoptions_form extends moodleform {
@@ -20,11 +21,11 @@ class downloadoptions_form extends moodleform {
 
         $mform = $this->_form;
 
-        $fields = $DB->get_records('data_fields', ['dataid' => $this->dataid], '', 'id, name');
+        $fields = local_dbreportdownload_getorderedfieldids($DB->get_record('data', ['id' => $this->dataid], '*', MUST_EXIST));
         $checkboxes = [];
-        foreach ($fields as $field) {
-            $checkboxes[] = $mform->createElement('advcheckbox', $field->id, '', $field->name, ['group' => 1]);
-            $mform->setDefault("fields[{$field->id}]", 1);
+        foreach ($fields as $id => $name) {
+            $checkboxes[] = $mform->createElement('advcheckbox', $id, '', $name, ['group' => 1]);
+            $mform->setDefault("fields[{$id}]", 1);
         }
         return $checkboxes;
     }
