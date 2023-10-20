@@ -60,12 +60,17 @@ function local_dbreportdownload_gettemplate($data, $fieldids) {
     global $DB;
 
     $contents = [];
+
+    $html = '<table><tbody>';
+
     foreach ($fieldids as $fieldid) {
         $field = $DB->get_record('data_fields', ['id' => $fieldid], 'id,name', MUST_EXIST);
-        $contents[] = "<strong>{$field->name}</strong>: [[{$field->name}]]";
+        $contents[] = "<tr><th>{$field->name}</th><td>[[{$field->name}]]</td></tr>";
     }
 
-    $content = implode('<br>', $contents);
+    $html .= implode('<br>', $contents);
 
-    return new \mod_data\template(\mod_data\manager::create_from_instance($data), $content);
+    $html .= '</tbody></table>';
+
+    return new \mod_data\template(\mod_data\manager::create_from_instance($data), $html);
 }
