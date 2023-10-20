@@ -64,8 +64,9 @@ function local_dbreportdownload_gettemplate($data, $fieldids) {
     $html = '<table><tbody>';
 
     foreach ($fieldids as $fieldid) {
-        $field = $DB->get_record('data_fields', ['id' => $fieldid], 'id,name', MUST_EXIST);
-        $contents[] = "<tr><th>{$field->name}</th><td>[[{$field->name}]]</td></tr>";
+        $field = $DB->get_record('data_fields', ['id' => $fieldid], 'id,type,name', MUST_EXIST);
+        $column = $field->type === 'textarea' ? "{$field->name} ([[[WORD_COUNT({$field->name})]]])" : $field->name;
+        $contents[] = "<tr><th>{$column}</th><td>[[{$field->name}]]</td></tr>";
     }
 
     $html .= implode('<br>', $contents);
