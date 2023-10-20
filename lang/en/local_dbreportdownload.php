@@ -31,3 +31,6 @@ $string['dbreportdownload:downloadmyreport'] = 'Download Own\'s Report';
 $string['downloadmyreport'] = 'Download My Report';
 $string['downloadmyreportfrom'] = 'Download My Report from {$a}';
 $string['exportedfields'] = 'Exported Fields';
+
+$string['wordcount_singular'] = '{$a} word';
+$string['wordcount_plural'] = '{$a} words';

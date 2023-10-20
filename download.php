@@ -60,7 +60,7 @@ echo html_writer::start_tag('body');
 $records = $DB->get_records('data_records', ['dataid' => $data->id, 'userid' => $USER->id], 'timecreated ASC');
 $parser = local_dbreportdownload_gettemplate($data, $fieldids);
 foreach ($records as $record) {
-    echo $parser->parse_entries([$record]);
+    echo local_dbreportdownload_parseentry($parser, $record);
     echo html_writer::start_tag('hr');
     echo html_writer::start_tag('br', ['style' => 'page-break-before: always;']);
 }
